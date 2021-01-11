@@ -1,13 +1,13 @@
 
-const int floatingAverageDuration = 5;
-const int calculationsPerMinute = 10;
+const float floatingAverageDuration = 0.1; // in minutes
+const int calculationsPerMinute = 240;
 
-const int ledPins[2] = { 2, 3 };
-const int numberOfMeasureSpots = 2;
+const int ledPins[2] = { 2 };
+const int numberOfMeasureSpots = 1;
 const int floatingAverageArrayLength = floatingAverageDuration * calculationsPerMinute;
-int resistancePins[numberOfMeasureSpots] = { A0, A1 } ;
-int motorPins[numberOfMeasureSpots] = { 4, 5 };
-int floatingAverage[numberOfMeasureSpots][floatingAverageArrayLength] = {{}, {}};
+int resistancePins[numberOfMeasureSpots] = { A0 } ;
+int motorPins[numberOfMeasureSpots] = { 4 };
+int floatingAverage[numberOfMeasureSpots][floatingAverageArrayLength] = {{}};
 int total[numberOfMeasureSpots];
 int readIndex = 0;
 bool firstLoop = true;
@@ -15,7 +15,7 @@ bool ledsOn = false;
 const long del = (1000L * 60) / calculationsPerMinute;
 
 
-int threshold = 200;
+int threshold = 930;
 
 
 void setup() {
@@ -52,9 +52,11 @@ void loop() {
 
     DebugLog(resistancePins[i], average, resistance);
 
-    if (average > threshold) {
+    if (average < threshold) {
       ledsOn = true;
       digitalWrite(motorPins[i], HIGH);
+    } else {
+      digitalWrite(motorPins[i], LOW);
     }
   }
 
@@ -81,7 +83,7 @@ void loop() {
 }
 
 void DebugLog(int pin, int average, int resistance) {
-      Serial.print("Average for resistance pin ");
+    Serial.print("Average for resistance pin ");
     Serial.print(pin);
     Serial.print(" is ");
     Serial.print(average);
